@@ -11,11 +11,23 @@ app.get('/elevator', (req, res) => {
     //error checking
     if ((!floor && floor !== 0) || (!ceiling && ceiling !== 0) || (!start && start !== 0)) {
         res.status(400).json({
-            "error": "Oops! Looks like you forgot the floor, ceiling, and/or start query params"
+            "error": "Oops! Looks like you forgot the floor, ceiling, and/or start query params."
         })
     } else {
-        let result = move(floor, ceiling, start);
-        res.status(200).json(result);
+        //second layer of error check
+        if (floor >= ceiling) {
+            res.status(400).json({
+                "error": "Oops! Floor must be less than ceiling, this isn't upsidedown world silly."
+            })
+        } else if ((start < floor) || (start > ceiling)){
+            res.status(400).json({
+                "error": "Oops! Start must be between floor and ceiling, this isn't Willy Wonka's glass elevator."
+            })
+        } else {
+            //no errors run this
+            let result = move(floor, ceiling, start);
+            res.status(200).json(result);
+        }
 
     }
 
